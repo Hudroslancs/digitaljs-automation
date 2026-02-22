@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
 
   # ── Flask App ────────────────────────────────────────────────────────────────
@@ -29,7 +27,7 @@ services:
     restart: unless-stopped
     command: tunnel --no-autoupdate run
     environment:
-      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}   # from .env
+      - TUNNEL_TOKEN=eyJhIjoiYTIyMTE5MjIzMjEyYzY4ODliMTc1MmZhZDM1ZTAxNDciLCJ0IjoiOWU3OThlYTUtYTU3MC00MWQ3LTk5MDUtYTdhMzcwMmQ3NjY0IiwicyI6Ik5UWTFPRFF4WmpZdE56UmtOeTAwTVdWaExUazJZVE10WlRJd05USmxZakJtTnpnMiJ9
     networks:
       - internal
     depends_on:
