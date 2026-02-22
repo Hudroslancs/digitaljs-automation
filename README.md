@@ -148,7 +148,7 @@ Now every `git push` to `main` will automatically build and deploy to EC2.
 
 ---
 
-## AWS Security Checklist (Cloud Security Portfolio)
+## AWS Security Checklist (CloudSec Portfolio test)
 
 - [ ] EC2 Security Group: SSH only from your IP, no HTTP/HTTPS inbound
 - [ ] IAM: Create a dedicated IAM user for this project, no root access
@@ -161,7 +161,7 @@ Now every `git push` to `main` will automatically build and deploy to EC2.
 
 ## Phase 2 Preview — Claims Feature
 
-When you're ready for Phase 2, these endpoints will be added:
+When ready for Phase 2, these endpoints will be added:
 - `POST /claims/submit` — technician submits claim with job details
 - `GET /claims/pending` — boss views pending claims
 - `POST /claims/approve/<id>` — boss approves/rejects
