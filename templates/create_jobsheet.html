@@ -1,531 +1,326 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Create Jobsheet</title>
+    <title>Jobsheet {{ js_number }}</title>
     <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .action-bar {
+            width: 900px;
+            margin: 10px auto;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .btn-save { background: #6c757d; color: white; }
+        .btn-print { background: #17a2b8; color: white; }
+        .btn-submit { background: #28a745; color: white; }
+        .btn:hover { opacity: 0.85; }
+        .save-status { color: #28a745; font-size: 13px; margin-left: 10px; }
+        .js-number-display { font-size: 18px; font-weight: bold; color: #333; margin-right: auto; }
+        .status-badge { padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: bold; }
+        .status-draft { background: #ffc107; color: #333; }
+        .status-printed { background: #17a2b8; color: white; }
+        .status-submitted { background: #28a745; color: white; }
+
+        /* Signature pad */
+        .signature-pad-wrapper {
+            position: absolute;
+            top: 1120px;
+            left: 50px;
+            width: 350px;
+        }
+        .signature-pad-wrapper canvas {
+            border: 2px solid red;
+            background: transparent;
+            cursor: crosshair;
+        }
+        .sig-controls { display: flex; gap: 5px; margin-top: 4px; }
+        .sig-btn { padding: 3px 8px; font-size: 11px; cursor: pointer; border: 1px solid #ccc; border-radius: 3px; background: white; }
+
+        @media print {
+            .action-bar { display: none; }
+            .sig-controls { display: none; }
+            .field { border: none !important; }
+        }
+    </style>
 </head>
 <body>
 
-<h1>Create Jobsheet Page</h1>
+<div class="action-bar">
+    <span class="js-number-display">JS No: {{ js_number }}</span>
+    <span class="status-badge status-{{ jobsheet.status if jobsheet else 'draft' }}">
+        {{ (jobsheet.status if jobsheet else 'draft').upper() }}
+    </span>
+    <a href="/" style="text-decoration:none; color:#666; font-size:13px;">← Back</a>
+    <button class="btn btn-save" onclick="saveDraft()">💾 Save</button>
+    <button class="btn btn-print" onclick="printJobsheet()">🖨️ Print</button>
+    <button class="btn btn-submit" onclick="submitJobsheet()">✅ Submit</button>
+    <span class="save-status" id="saveStatus"></span>
+</div>
 
 <div class="jobsheet-container">
     <img src="/static/jobsheet_bg.png" class="jobsheet-bg">
 
     <!-- ===== HEADER / CLIENT INFO ===== -->
-
-    <input
-        type="text"
-        class="field jobsheet-no"
-        placeholder="JS No"
-        tabindex="10"
-    >
-
-    <input
-        type="text"
-        class="field acc-no"
-        placeholder="Acc No"
-        tabindex="20"
-    >
-
-    <input
-        type="text"
-        class="field client-name"
-        placeholder="Client Name"
-        tabindex="30"
-    >
-
-    <textarea
-        class="field address"
-        placeholder="Clinic Address"
-        tabindex="40"
-    ></textarea>
-
-    <input
-        type="text"
-        class="field contacts"
-        placeholder="Contacts"
-        tabindex="50"
-    >
-
-    <input
-        type="text"
-        class="field date-issued"
-        placeholder="Date Issued"
-        tabindex="60"
-    >
-
-    <input
-        type="text"
-        class="field app-date-time"
-        placeholder="Appt Date & Time"
-        tabindex="70"
-    >
-
-    <input
-        type="text"
-        class="field date-purchased"
-        placeholder="Date Purchased"
-        tabindex="80"
-    >
+    <input type="text" class="field jobsheet-no" id="jobsheet_no" value="{{ js_number }}" readonly tabindex="-1">
+    <input type="text" class="field acc-no" id="acc_no" placeholder="Acc No" tabindex="20"
+        value="{{ jobsheet.acc_no if jobsheet else '' }}">
+    <input type="text" class="field client-name" id="client_name" placeholder="Client Name" tabindex="30"
+        value="{{ jobsheet.client_name if jobsheet else '' }}">
+    <textarea class="field address" id="address" placeholder="Clinic Address" tabindex="40">{{ jobsheet.address if jobsheet else '' }}</textarea>
+    <input type="text" class="field contacts" id="contacts" placeholder="Contacts" tabindex="50"
+        value="{{ jobsheet.contacts if jobsheet else '' }}">
+    <input type="text" class="field date-issued" id="date_issued" placeholder="Date Issued" tabindex="60"
+        value="{{ jobsheet.date_issued if jobsheet else '' }}">
+    <input type="text" class="field app-date-time" id="app_date_time" placeholder="Appt Date & Time" tabindex="70"
+        value="{{ jobsheet.app_date_time if jobsheet else '' }}">
+    <input type="text" class="field date-purchased" id="date_purchased" placeholder="Date Purchased" tabindex="80"
+        value="{{ jobsheet.date_purchased if jobsheet else '' }}">
 
     <!-- ===== WARRANTY ===== -->
-
-    <input
-        type="radio"
-        name="warranty"
-        value="yes"
-        class="field warranty-yes"
-    >
-
-    <input
-        type="radio"
-        name="warranty"
-        value="no"
-        class="field warranty-no"
-    >
+    <input type="radio" name="warranty" value="yes" class="field warranty-yes"
+        {{ 'checked' if jobsheet and jobsheet.warranty == 'yes' else '' }}>
+    <input type="radio" name="warranty" value="no" class="field warranty-no"
+        {{ 'checked' if jobsheet and jobsheet.warranty == 'no' else '' }}>
 
     <!-- ===== EQUIPMENT ===== -->
-
-    <textarea
-        class="field brand-model"
-        placeholder="Brand & Model"
-        tabindex="90"
-    ></textarea>
-
-    <textarea
-        class="field serial-no"
-        placeholder="Serial No"
-        tabindex="100"
-    ></textarea>
+    <textarea class="field brand-model" id="brand_model" placeholder="Brand & Model" tabindex="90">{{ jobsheet.brand_model if jobsheet else '' }}</textarea>
+    <textarea class="field serial-no" id="serial_no" placeholder="Serial No" tabindex="100">{{ jobsheet.serial_no if jobsheet else '' }}</textarea>
 
     <!-- ===== SERVICE DETAILS ===== -->
+    <textarea class="field service-request" id="service_request" placeholder="Service Request" tabindex="110">{{ jobsheet.service_request if jobsheet else '' }}</textarea>
+    <textarea class="field service-report" id="service_report" placeholder="Service Report" tabindex="120">{{ jobsheet.service_report if jobsheet else '' }}</textarea>
 
-    <textarea
-        class="field service-request"
-        placeholder="Service Request"
-        tabindex="110"
-    ></textarea>
+    <!-- ===== COMPONENTS ===== -->
+    <div class="parts-table">
+    {% for i in range(1, 9) %}
+        <input type="text" class="field part-name part-row-{{ i }}" placeholder="Component">
+        <input type="text" class="field part-no part-row-{{ i }}" placeholder="Part No">
+        <input type="number" class="field qty part-row-{{ i }}" placeholder="Qty">
+        <input type="number" class="field unit-price part-row-{{ i }}" placeholder="Unit Price">
+        <input type="number" class="field line-total part-row-{{ i }}" placeholder="Total" readonly>
+    {% endfor %}
+    </div>
 
-    <textarea
-        class="field service-report"
-        placeholder="Service Report"
-        tabindex="120"
-    ></textarea>
-
-<!-- ===== COMPONENTS USED ===== -->
-
-<div class="parts-table">
-
-    <!-- ROW 1 -->
-    <input
-        type="text"
-        class="field part-name part-row-1"
-        placeholder="Component"
-    >
-
-    <input
-        type="text"
-        class="field part-no part-row-1"
-        placeholder="Part No"
-    >
-
-    <input
-        type="number"
-        class="field qty part-row-1"
-        placeholder="Qty"
-    >
-
-    <input
-        type="number"
-        class="field unit-price part-row-1"
-        placeholder="Unit Price"
-    >
-
-    <input
-        type="number"
-        class="field line-total part-row-1"
-        placeholder="Total"
-        readonly
-    >
-
-    <!-- ROW 2 -->
-    <input
-        type="text"
-        class="field part-name part-row-2"
-        placeholder="Component"
-    >
-
-    <input
-        type="text"
-        class="field part-no part-row-2"
-        placeholder="Part No"
-    >
-
-    <input
-        type="number"
-        class="field qty part-row-2"
-        placeholder="Qty"
-    >
-
-    <input
-        type="number"
-        class="field unit-price part-row-2"
-        placeholder="Unit Price"
-    >
-
-    <input
-        type="number"
-        class="field line-total part-row-2"
-        placeholder="Total"
-        readonly
-    >
-
-    <!-- ROW 3 -->
-    <input
-        type="text"
-        class="field part-name part-row-3"
-        placeholder="Component"
-    >
-
-    <input
-        type="text"
-        class="field part-no part-row-3"
-        placeholder="Part No"
-    >
-
-    <input
-        type="number"
-        class="field qty part-row-3"
-        placeholder="Qty"
-    >
-
-    <input
-        type="number"
-        class="field unit-price part-row-3"
-        placeholder="Unit Price"
-    >
-
-    <input
-        type="number"
-        class="field line-total part-row-3"
-        placeholder="Total"
-        readonly
-    >
-
-    <!-- ROW 4 -->
-    <input
-        type="text"
-        class="field part-name part-row-4"
-        placeholder="Component"
-    >
-
-    <input
-        type="text"
-        class="field part-no part-row-4"
-        placeholder="Part No"
-    >
-
-    <input
-        type="number"
-        class="field qty part-row-4"
-        placeholder="Qty"
-    >
-
-    <input
-        type="number"
-        class="field unit-price part-row-4"
-        placeholder="Unit Price"
-    >
-
-    <input
-        type="number"
-        class="field line-total part-row-4"
-        placeholder="Total"
-        readonly
-    >
-
-    <!-- ROW 5 -->
-    <input
-        type="text"
-        class="field part-name part-row-5"
-        placeholder="Component"
-    >
-
-    <input
-        type="text"
-        class="field part-no part-row-5"
-        placeholder="Part No"
-    >
-
-    <input
-        type="number"
-        class="field qty part-row-5"
-        placeholder="Qty"
-    >
-
-    <input
-        type="number"
-        class="field unit-price part-row-5"
-        placeholder="Unit Price"
-    >
-
-    <input
-        type="number"
-        class="field line-total part-row-5"
-        placeholder="Total"
-        readonly
-    >
-
-    <!-- ROW 6 -->
-    <input
-        type="text"
-        class="field part-name part-row-6"
-        placeholder="Component"
-    >
-
-    <input
-        type="text"
-        class="field part-no part-row-6"
-        placeholder="Part No"
-    >
-
-    <input
-        type="number"
-        class="field qty part-row-6"
-        placeholder="Qty"
-    >
-
-    <input
-        type="number"
-        class="field unit-price part-row-6"
-        placeholder="Unit Price"
-    >
-
-    <input
-        type="number"
-        class="field line-total part-row-6"
-        placeholder="Total"
-        readonly
-    >
-
-    <!-- ROW 7 -->
-    <input
-        type="text"
-        class="field part-name part-row-7"
-        placeholder="Component"
-    >
-
-    <input
-        type="text"
-        class="field part-no part-row-7"
-        placeholder="Part No"
-    >
-
-    <input
-        type="number"
-        class="field qty part-row-7"
-        placeholder="Qty"
-    >
-
-    <input
-        type="number"
-        class="field unit-price part-row-7"
-        placeholder="Unit Price"
-    >
-
-    <input
-        type="number"
-        class="field line-total part-row-7"
-        placeholder="Total"
-        readonly
-    >
-
-    <!-- ROW 8 -->
-    <input
-        type="text"
-        class="field part-name part-row-8"
-        placeholder="Component"
-    >
-
-    <input
-        type="text"
-        class="field part-no part-row-8"
-        placeholder="Part No"
-    >
-
-    <input
-        type="number"
-        class="field qty part-row-8"
-        placeholder="Qty"
-    >
-
-    <input
-        type="number"
-        class="field unit-price part-row-8"
-        placeholder="Unit Price"
-    >
-
-    <input
-        type="number"
-        class="field line-total part-row-8"
-        placeholder="Total"
-        readonly
-    >
-
-</div>
-
-    <input
-        type="text"
-        class="field service-charge"
-        placeholder="Service Charge"
-        tabindex="130"
-    >
-    <input
-        type="text"
-        class="field grand-total"
-        placeholder="Grand Total"
-        readonly
-        tabindex="140"
-    >
-
-    <input
-        type="text"
-        class="field payment-terms"
-        placeholder="Payment Terms"
-        tabindex="200"
-    >
-
-    <input
-        type="text"
-        class="field date"
-        placeholder="Date"
-        tabindex="210"
-    >
-
-    <input
-        type="text"
-        class="field time-in"
-        placeholder="Time In"
-        tabindex="220"
-    >
-
-    <input
-        type="text"
-        class="field time-out"
-        placeholder="Time Out"
-        tabindex="230"
-    >
+    <input type="text" class="field service-charge" id="service_charge" placeholder="Service Charge" tabindex="130"
+        value="{{ jobsheet.service_charge if jobsheet else '' }}">
+    <input type="text" class="field grand-total" id="grand_total" placeholder="Grand Total" readonly tabindex="140"
+        value="{{ jobsheet.grand_total if jobsheet else '' }}">
+    <input type="text" class="field payment-terms" id="payment_terms" placeholder="Payment Terms" tabindex="200"
+        value="{{ jobsheet.payment_terms if jobsheet else '' }}">
+    <input type="text" class="field date" id="date" placeholder="Date" tabindex="210"
+        value="{{ jobsheet.date if jobsheet else '' }}">
+    <input type="text" class="field time-in" id="time_in" placeholder="Time In" tabindex="220"
+        value="{{ jobsheet.time_in if jobsheet else '' }}">
+    <input type="text" class="field time-out" id="time_out" placeholder="Time Out" tabindex="230"
+        value="{{ jobsheet.time_out if jobsheet else '' }}">
 
     <!-- ===== TYPE OF SERVICE ===== -->
+    <input type="checkbox" class="field svc-diagnosis" name="service_type" value="diagnosis" tabindex="240">
+    <input type="checkbox" class="field svc-site" name="service_type" value="site_visit" tabindex="250">
+    <input type="checkbox" class="field svc-ppm" name="service_type" value="ppm" tabindex="260">
+    <input type="checkbox" class="field svc-contract" name="service_type" value="maintenance_contract" tabindex="270">
+    <input type="checkbox" class="field svc-install" name="service_type" value="installation" tabindex="280">
+    <input type="checkbox" class="field svc-cheque" name="service_type" value="cheque_collection" tabindex="290">
+    <input type="checkbox" class="field svc-repair" name="service_type" value="repair" tabindex="300">
+    <input type="checkbox" class="field svc-others" name="service_type" value="others" tabindex="310">
+    <input type="text" class="field svc-others-text" id="svc_others_text" placeholder="Others" tabindex="320"
+        value="{{ jobsheet.service_others_text if jobsheet else '' }}">
 
-    <input
-        type="checkbox"
-        class="field svc-diagnosis"
-        name="service_type"
-        value="diagnosis"
-        tabindex="240"
-    >
+    <!-- ===== JOB STATUS ===== -->
+    <input type="checkbox" class="field completed" name="complete" value="completed" tabindex="330"
+        {{ 'checked' if jobsheet and jobsheet.job_completed == 'True' else '' }}>
+    <input type="checkbox" class="field follow-up" name="follow_up" value="follow_up" tabindex="340"
+        {{ 'checked' if jobsheet and jobsheet.job_follow_up == 'True' else '' }}>
+    <input type="checkbox" class="field issue-quotation" name="issue_quotation" value="issue_quotation" tabindex="350"
+        {{ 'checked' if jobsheet and jobsheet.job_issue_quotation == 'True' else '' }}>
+    <input type="checkbox" class="field unit-returned" name="unit_returned" value="unit_returned" tabindex="360"
+        {{ 'checked' if jobsheet and jobsheet.job_unit_returned == 'True' else '' }}>
 
-    <input
-        type="checkbox"
-        class="field svc-site"
-        name="service_type"
-        value="site_visit"
-        tabindex="250"
-    >
+    <!-- ===== SIGNATURE PAD ===== -->
+    <div class="signature-pad-wrapper">
+        <canvas id="signatureCanvas" width="350" height="80"></canvas>
+        <div class="sig-controls">
+            <button class="sig-btn" onclick="clearSignature()">Clear</button>
+            <span style="font-size:11px; color:#666;">← Client signature</span>
+        </div>
+    </div>
 
-    <input
-        type="checkbox"
-        class="field svc-ppm"
-        name="service_type"
-        value="ppm"
-        tabindex="260"
-    >
-
-    <input
-        type="checkbox"
-        class="field svc-contract"
-        name="service_type"
-        value="maintenance_contract"
-        tabindex="270"
-    >
-
-    <input
-        type="checkbox"
-        class="field svc-install"
-        name="service_type"
-        value="installation"
-        tabindex="280"
-    >
-
-    <input
-        type="checkbox"
-        class="field svc-cheque"
-        name="service_type"
-        value="cheque_collection"
-        tabindex="290"
-    >
-
-    <input
-        type="checkbox"
-        class="field svc-repair"
-        name="service_type"
-        value="repair"
-        tabindex="300"
-    >
-
-    <input
-        type="checkbox"
-        class="field svc-others"
-        name="service_type"
-        value="others"
-        tabindex="310"
-    >
-
-    <input
-        type="text"
-        class="field svc-others-text"
-        placeholder="Others"
-        tabindex="320"
-    >
-
-     <!-- =====JOB STATUS ===== -->
-
-     <input
-        type="checkbox"
-        class="field completed"
-        name="complete"
-        value="completed"
-        tabindex="330"
-    >
-
-    <input
-        type="checkbox"
-        class="field follow-up"
-        name="follow_up"
-        value="follow_up"
-        tabindex="340"
-    >
-
-    <input
-        type="checkbox"
-        class="field issue-quotation"
-        name="issue_quotation"
-        value="issue_quotation"
-        tabindex="350"
-    >
-
-    <input
-        type="checkbox"
-        class="field unit-returned"
-        name="unit_returned"
-        value="unit_returned"
-        tabindex="360"
-    >
-    
 </div>
 
 <script src="/static/script.js"></script>
+<script>
+const JS_NUMBER = {{ js_number }};
+
+// ── Load parts from DB if editing ────────────────────────────────────────────
+{% if jobsheet and jobsheet.parts %}
+(function loadParts() {
+    try {
+        const parts = JSON.parse('{{ jobsheet.parts | safe }}');
+        const rowClasses = ["part-row-1","part-row-2","part-row-3","part-row-4","part-row-5","part-row-6","part-row-7","part-row-8"];
+        parts.forEach((part, i) => {
+            if (!rowClasses[i]) return;
+            const rc = rowClasses[i];
+            document.querySelector(`.${rc}.part-name`).value = part.name || '';
+            document.querySelector(`.${rc}.part-no`).value = part.part_no || '';
+            document.querySelector(`.${rc}.qty`).value = part.qty || '';
+            document.querySelector(`.${rc}.unit-price`).value = part.unit_price || '';
+            document.querySelector(`.${rc}.line-total`).value = part.line_total || '';
+        });
+    } catch(e) {}
+})();
+{% endif %}
+
+// ── Load service types checkboxes ─────────────────────────────────────────────
+{% if jobsheet and jobsheet.service_types %}
+(function loadServiceTypes() {
+    try {
+        const types = JSON.parse('{{ jobsheet.service_types | safe }}');
+        document.querySelectorAll('[name="service_type"]').forEach(cb => {
+            cb.checked = types.includes(cb.value);
+        });
+    } catch(e) {}
+})();
+{% endif %}
+
+// ── Load signature ────────────────────────────────────────────────────────────
+{% if jobsheet and jobsheet.signature %}
+(function loadSignature() {
+    const canvas = document.getElementById('signatureCanvas');
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    img.onload = () => ctx.drawImage(img, 0, 0);
+    img.src = '{{ jobsheet.signature | safe }}';
+})();
+{% endif %}
+
+// ── Collect all form data ─────────────────────────────────────────────────────
+function collectData() {
+    const rowClasses = ["part-row-1","part-row-2","part-row-3","part-row-4","part-row-5","part-row-6","part-row-7","part-row-8"];
+    const parts = rowClasses.map(rc => ({
+        name: document.querySelector(`.${rc}.part-name`)?.value || '',
+        part_no: document.querySelector(`.${rc}.part-no`)?.value || '',
+        qty: document.querySelector(`.${rc}.qty`)?.value || '',
+        unit_price: document.querySelector(`.${rc}.unit-price`)?.value || '',
+        line_total: document.querySelector(`.${rc}.line-total`)?.value || ''
+    }));
+
+    const serviceTypes = Array.from(document.querySelectorAll('[name="service_type"]:checked')).map(cb => cb.value);
+    const warranty = document.querySelector('[name="warranty"]:checked')?.value || '';
+    const signature = document.getElementById('signatureCanvas').toDataURL();
+
+    return {
+        js_number: JS_NUMBER,
+        acc_no: document.getElementById('acc_no')?.value,
+        client_name: document.getElementById('client_name')?.value,
+        address: document.getElementById('address')?.value,
+        contacts: document.getElementById('contacts')?.value,
+        date_issued: document.getElementById('date_issued')?.value,
+        app_date_time: document.getElementById('app_date_time')?.value,
+        date_purchased: document.getElementById('date_purchased')?.value,
+        warranty,
+        brand_model: document.getElementById('brand_model')?.value,
+        serial_no: document.getElementById('serial_no')?.value,
+        service_request: document.getElementById('service_request')?.value,
+        service_report: document.getElementById('service_report')?.value,
+        service_types: serviceTypes,
+        service_others_text: document.getElementById('svc_others_text')?.value,
+        parts,
+        service_charge: document.getElementById('service_charge')?.value,
+        grand_total: document.getElementById('grand_total')?.value,
+        payment_terms: document.getElementById('payment_terms')?.value,
+        job_completed: document.querySelector('.completed')?.checked || false,
+        job_follow_up: document.querySelector('.follow-up')?.checked || false,
+        job_issue_quotation: document.querySelector('.issue-quotation')?.checked || false,
+        job_unit_returned: document.querySelector('.unit-returned')?.checked || false,
+        date: document.getElementById('date')?.value,
+        time_in: document.getElementById('time_in')?.value,
+        time_out: document.getElementById('time_out')?.value,
+        signature
+    };
+}
+
+// ── Save draft ────────────────────────────────────────────────────────────────
+async function saveDraft() {
+    const status = document.getElementById('saveStatus');
+    status.textContent = 'Saving...';
+    const res = await fetch('/api/save', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(collectData())
+    });
+    if (res.ok) {
+        status.textContent = '✓ Saved';
+        setTimeout(() => status.textContent = '', 3000);
+    } else {
+        status.textContent = '✗ Save failed';
+        status.style.color = 'red';
+    }
+}
+
+// ── Print ─────────────────────────────────────────────────────────────────────
+async function printJobsheet() {
+    await saveDraft();
+    await fetch(`/api/print/${JS_NUMBER}`, { method: 'POST' });
+    window.print();
+}
+
+// ── Submit ────────────────────────────────────────────────────────────────────
+async function submitJobsheet() {
+    if (!confirm('Submit this jobsheet? This marks it as complete and sends data to the spreadsheet.')) return;
+    await saveDraft();
+    const res = await fetch(`/api/submit/${JS_NUMBER}`, { method: 'POST' });
+    if (res.ok) {
+        alert('Jobsheet submitted successfully!');
+        window.location.href = '/';
+    } else {
+        alert('Submit failed. Please try again.');
+    }
+}
+
+// ── Signature pad ─────────────────────────────────────────────────────────────
+(function initSignature() {
+    const canvas = document.getElementById('signatureCanvas');
+    const ctx = canvas.getContext('2d');
+    let drawing = false;
+
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+
+    function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        if (e.touches) {
+            return { x: e.touches[0].clientX - rect.left, y: e.touches[0].clientY - rect.top };
+        }
+        return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    }
+
+    canvas.addEventListener('mousedown', e => { drawing = true; ctx.beginPath(); const p = getPos(e); ctx.moveTo(p.x, p.y); });
+    canvas.addEventListener('mousemove', e => { if (!drawing) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); });
+    canvas.addEventListener('mouseup', () => drawing = false);
+    canvas.addEventListener('mouseleave', () => drawing = false);
+    canvas.addEventListener('touchstart', e => { e.preventDefault(); drawing = true; ctx.beginPath(); const p = getPos(e); ctx.moveTo(p.x, p.y); });
+    canvas.addEventListener('touchmove', e => { e.preventDefault(); if (!drawing) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); });
+    canvas.addEventListener('touchend', () => drawing = false);
+})();
+
+function clearSignature() {
+    const canvas = document.getElementById('signatureCanvas');
+    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+}
+
+// Auto-save every 60 seconds
+setInterval(saveDraft, 60000);
+</script>
 
 </body>
 </html>

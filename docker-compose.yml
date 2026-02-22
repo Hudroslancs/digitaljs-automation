@@ -7,18 +7,25 @@ services:
     restart: unless-stopped
     environment:
       - FLASK_ENV=production
-      - SECRET_KEY=${SECRET_KEY}          # set in .env file, never hardcode
+      - SECRET_KEY=${SECRET_KEY}
+      - DB_HOST=${DB_HOST}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - N8N_WEBHOOK_URL=${N8N_WEBHOOK_URL}
+    command: >
+      sh -c "python -c 'from app import init_db; init_db()' && 
+             gunicorn --bind 0.0.0.0:5000 --workers 2 --timeout 60 app:app"
     volumes:
-      - app_data:/app/data               # persistent storage for future DB/files
+      - app_data:/app/data
     networks:
       - internal
-    # No ports exposed to host — Cloudflare Tunnel reaches it internally
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 10s
+      start_period: 15s
 
   # ── Cloudflare Tunnel ────────────────────────────────────────────────────────
   cloudflared:
@@ -27,12 +34,28 @@ services:
     restart: unless-stopped
     command: tunnel --no-autoupdate run
     environment:
-      - TUNNEL_TOKEN=eyJhIjoiYTIyMTE5MjIzMjEyYzY4ODliMTc1MmZhZDM1ZTAxNDciLCJ0IjoiOWU3OThlYTUtYTU3MC00MWQ3LTk5MDUtYTdhMzcwMmQ3NjY0IiwicyI6Ik5UWTFPRFF4WmpZdE56UmtOeTAwTVdWaExUazJZVE10WlRJd05USmxZakJtTnpnMiJ9
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
     networks:
       - internal
     depends_on:
       app:
         condition: service_healthy
+
+  # ── n8n ──────────────────────────────────────────────────────────────────────
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n
+    restart: unless-stopped
+    environment:
+      - N8N_HOST=0.0.0.0
+      - N8N_PORT=5678
+      - WEBHOOK_URL=https://n8n.${DOMAIN:-hudroslan.com}
+    volumes:
+      - n8n_data:/home/node/.n8n
+    networks:
+      - internal
+    ports:
+      - "127.0.0.1:5678:5678"
 
   # ── Prometheus ───────────────────────────────────────────────────────────────
   prometheus:
@@ -44,7 +67,6 @@ services:
       - prometheus_data:/prometheus
     networks:
       - internal
-    # Exposed only on localhost — do NOT open this port in AWS Security Group
     ports:
       - "127.0.0.1:9090:9090"
 
@@ -69,5 +91,6 @@ networks:
 
 volumes:
   app_data:
+  n8n_data:
   prometheus_data:
   grafana_data:
