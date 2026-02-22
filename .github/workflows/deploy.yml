@@ -7,6 +7,9 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
 
     steps:
       # ── 1. Checkout code ──────────────────────────────────────────────────────
@@ -26,6 +29,7 @@ jobs:
         with:
           context: .
           push: true
+          no-cache: true
           tags: ghcr.io/hudroslancs/digitaljs-automation/jobsheet-app:latest
 
       # ── 3. SSH into EC2 and pull + restart ───────────────────────────────────
