@@ -18,7 +18,7 @@ def metrics():
 # ── App routes ────────────────────────────────────────────────────────────────
 @app.route("/")
 def home():
-    return "Jobsheet system running!"
+    return "Try,test,tengok!"
 
 @app.route("/create")
 def create_jobsheet():
