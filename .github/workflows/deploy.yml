@@ -26,7 +26,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.repository }}/jobsheet-app:latest
+          tags: ghcr.io/hudroslancs/digitaljs-automation/jobsheet-app:latest
 
       # ── 3. SSH into EC2 and pull + restart ───────────────────────────────────
       - name: Deploy to EC2
