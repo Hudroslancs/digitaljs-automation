@@ -1,0 +1,75 @@
+version: "3.9"
+
+services:
+
+  # ── Flask App ────────────────────────────────────────────────────────────────
+  app:
+    build: .
+    container_name: jobsheet_app
+    restart: unless-stopped
+    environment:
+      - FLASK_ENV=production
+      - SECRET_KEY=${SECRET_KEY}          # set in .env file, never hardcode
+    volumes:
+      - app_data:/app/data               # persistent storage for future DB/files
+    networks:
+      - internal
+    # No ports exposed to host — Cloudflare Tunnel reaches it internally
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # ── Cloudflare Tunnel ────────────────────────────────────────────────────────
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}   # from .env
+    networks:
+      - internal
+    depends_on:
+      app:
+        condition: service_healthy
+
+  # ── Prometheus ───────────────────────────────────────────────────────────────
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: unless-stopped
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    networks:
+      - internal
+    # Exposed only on localhost — do NOT open this port in AWS Security Group
+    ports:
+      - "127.0.0.1:9090:9090"
+
+  # ── Grafana ──────────────────────────────────────────────────────────────────
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - internal
+    ports:
+      - "127.0.0.1:3000:3000"
+
+networks:
+  internal:
+    driver: bridge
+
+volumes:
+  app_data:
+  prometheus_data:
+  grafana_data:

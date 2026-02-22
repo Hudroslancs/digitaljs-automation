@@ -1,0 +1,263 @@
+.jobsheet-container {
+    position: relative;
+    width: 900px;
+    margin: 0 auto;
+}
+
+.jobsheet-bg {
+    width: 100%;
+    display: block;
+}
+
+.field {
+    position: absolute;
+    border: 2px solid red;
+    background: transparent;
+    font-size: 14px;
+    padding: 2px;
+    resize: none;
+    font-family: Arial, sans-serif;
+}
+
+/* ===== HEADER / CLIENT ===== */
+
+.jobsheet-no {
+    top: 200px;
+    left: 650px;
+    width: 100px;
+}
+
+.acc-no {
+    top: 210px;
+    left: 120px;
+    width: 310px;
+}
+
+.client-name {
+    top: 240px;
+    left: 120px;
+    width: 310px;
+}
+
+.address {
+    top: 270px;
+    left: 120px;
+    width: 310px;
+    height: 60px;
+}
+
+.contacts {
+    top: 340px;
+    left: 120px;
+    width: 310px;
+}
+
+.date-issued {
+    top: 240px;
+    left: 460px;
+    width: 150px;
+}
+
+.app-date-time {
+    top: 305px;
+    left: 460px;
+    width: 150px;
+}
+
+.date-purchased {
+    top: 305px;
+    left: 666px;
+    width: 150px;
+}
+
+/* ===== WARRANTY ===== */
+
+.warranty-yes {
+    top: 349px;
+    left: 740px;
+}
+
+.warranty-no {
+    top: 349px;
+    left: 802px;
+}
+
+/* ===== EQUIPMENT ===== */
+
+.brand-model {
+    top: 400px;
+    left: 50px;
+    width: 120px;
+    height: 120px;
+}
+
+.serial-no {
+    top: 560px;
+    left: 50px;
+    width: 120px;
+    height: 120px;
+}
+
+/* ===== SERVICE DETAILS ===== */
+
+.service-request {
+    top: 400px;
+    left: 200px;
+    width: 616px;
+    height: 60px;
+}
+
+.service-report {
+    top: 495px;
+    left: 200px;
+    width: 616px;
+    height: 185px;
+}
+
+/* ============================= */
+/* COMPONENTS / PARTS ROWS      */
+/* ============================= */
+
+.part-name {
+    top: 730px;
+    left: 50px;
+    width: 360px;
+}
+
+.part-no {
+    top: 730px;
+    left: 450px;
+    width: 80px;
+}
+
+.qty {
+    top: 730px;
+    left: 555px;
+    width: 80px;
+}
+
+.unit-price {
+    top: 730px;
+    left: 655px;
+    width: 80px;
+}
+
+.line-total {
+    top: 730px;
+    left: 755px;
+    width: 80px;   
+}
+
+/* ============================= */
+/* ROW OFFSETS                  */
+/* ============================= */
+
+.part-row-1 { top: 730px; }
+.part-row-2 { top: 760px; }
+.part-row-3 { top: 790px; }
+.part-row-4 { top: 820px; }
+.part-row-5 { top: 850px; }
+.part-row-6 { top: 880px; }
+.part-row-7 { top: 910px; }
+.part-row-8 { top: 940px; }
+
+.service-charge {
+    top: 970px;
+    left: 755px;
+    width: 80px;
+}
+
+.grand-total {
+    top: 1000px;
+    left: 755px;
+    width: 80px;
+}
+
+.payment-terms {
+    top: 1030px;
+    left: 755px;
+    width: 80px;   
+}
+
+/* SERVICE TYPE CHECKBOXES      */
+
+.svc-diagnosis {
+    top: 990px;
+    left: 30px;
+}
+.svc-site {
+    top: 990px;
+    left: 125px;
+}
+.svc-ppm {
+    top: 1025px;
+    left: 30px;
+}
+.svc-contract {
+    top: 1025px;
+    left: 125px;
+}
+
+.svc-install {
+    top: 1060px;
+    left: 30px;
+}
+.svc-cheque {
+    top: 1060px;
+    left: 125px;
+}
+.svc-repair {
+    top: 1095px;
+    left: 30px;
+}
+.svc-others {
+    top: 1095px;
+    left: 125px;
+}
+
+.svc-others-text {
+    top: 1095px;
+    left: 200px;
+    width: 100px;
+}
+
+/* JOBSTATUS CHECKBOX */
+
+.completed {
+    top: 990px;
+    left: 315px;
+}
+
+.follow-up {
+    top: 1015px;
+    left: 315px;
+}
+
+.issue-quotation {
+    top: 990px;
+    left: 450px;
+}
+
+.unit-returned {
+    top: 1015px;
+    left: 450px;
+}
+
+.date {
+    top: 1190px;
+    left: 460px;
+    width: 100px;
+}
+
+.time-in {
+    top: 1190px;
+    left: 660px;
+    width: 80px;
+}
+
+.time-out {
+    top: 1190px;
+    left: 760px;
+    width: 80px;
+}
+

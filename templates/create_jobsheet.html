@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Jobsheet</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<h1>Create Jobsheet Page</h1>
+
+<div class="jobsheet-container">
+    <img src="/static/jobsheet_bg.png" class="jobsheet-bg">
+
+    <!-- ===== HEADER / CLIENT INFO ===== -->
+
+    <input
+        type="text"
+        class="field jobsheet-no"
+        placeholder="JS No"
+        tabindex="10"
+    >
+
+    <input
+        type="text"
+        class="field acc-no"
+        placeholder="Acc No"
+        tabindex="20"
+    >
+
+    <input
+        type="text"
+        class="field client-name"
+        placeholder="Client Name"
+        tabindex="30"
+    >
+
+    <textarea
+        class="field address"
+        placeholder="Clinic Address"
+        tabindex="40"
+    ></textarea>
+
+    <input
+        type="text"
+        class="field contacts"
+        placeholder="Contacts"
+        tabindex="50"
+    >
+
+    <input
+        type="text"
+        class="field date-issued"
+        placeholder="Date Issued"
+        tabindex="60"
+    >
+
+    <input
+        type="text"
+        class="field app-date-time"
+        placeholder="Appt Date & Time"
+        tabindex="70"
+    >
+
+    <input
+        type="text"
+        class="field date-purchased"
+        placeholder="Date Purchased"
+        tabindex="80"
+    >
+
+    <!-- ===== WARRANTY ===== -->
+
+    <input
+        type="radio"
+        name="warranty"
+        value="yes"
+        class="field warranty-yes"
+    >
+
+    <input
+        type="radio"
+        name="warranty"
+        value="no"
+        class="field warranty-no"
+    >
+
+    <!-- ===== EQUIPMENT ===== -->
+
+    <textarea
+        class="field brand-model"
+        placeholder="Brand & Model"
+        tabindex="90"
+    ></textarea>
+
+    <textarea
+        class="field serial-no"
+        placeholder="Serial No"
+        tabindex="100"
+    ></textarea>
+
+    <!-- ===== SERVICE DETAILS ===== -->
+
+    <textarea
+        class="field service-request"
+        placeholder="Service Request"
+        tabindex="110"
+    ></textarea>
+
+    <textarea
+        class="field service-report"
+        placeholder="Service Report"
+        tabindex="120"
+    ></textarea>
+
+<!-- ===== COMPONENTS USED ===== -->
+
+<div class="parts-table">
+
+    <!-- ROW 1 -->
+    <input
+        type="text"
+        class="field part-name part-row-1"
+        placeholder="Component"
+    >
+
+    <input
+        type="text"
+        class="field part-no part-row-1"
+        placeholder="Part No"
+    >
+
+    <input
+        type="number"
+        class="field qty part-row-1"
+        placeholder="Qty"
+    >
+
+    <input
+        type="number"
+        class="field unit-price part-row-1"
+        placeholder="Unit Price"
+    >
+
+    <input
+        type="number"
+        class="field line-total part-row-1"
+        placeholder="Total"
+        readonly
+    >
+
+    <!-- ROW 2 -->
+    <input
+        type="text"
+        class="field part-name part-row-2"
+        placeholder="Component"
+    >
+
+    <input
+        type="text"
+        class="field part-no part-row-2"
+        placeholder="Part No"
+    >
+
+    <input
+        type="number"
+        class="field qty part-row-2"
+        placeholder="Qty"
+    >
+
+    <input
+        type="number"
+        class="field unit-price part-row-2"
+        placeholder="Unit Price"
+    >
+
+    <input
+        type="number"
+        class="field line-total part-row-2"
+        placeholder="Total"
+        readonly
+    >
+
+    <!-- ROW 3 -->
+    <input
+        type="text"
+        class="field part-name part-row-3"
+        placeholder="Component"
+    >
+
+    <input
+        type="text"
+        class="field part-no part-row-3"
+        placeholder="Part No"
+    >
+
+    <input
+        type="number"
+        class="field qty part-row-3"
+        placeholder="Qty"
+    >
+
+    <input
+        type="number"
+        class="field unit-price part-row-3"
+        placeholder="Unit Price"
+    >
+
+    <input
+        type="number"
+        class="field line-total part-row-3"
+        placeholder="Total"
+        readonly
+    >
+
+    <!-- ROW 4 -->
+    <input
+        type="text"
+        class="field part-name part-row-4"
+        placeholder="Component"
+    >
+
+    <input
+        type="text"
+        class="field part-no part-row-4"
+        placeholder="Part No"
+    >
+
+    <input
+        type="number"
+        class="field qty part-row-4"
+        placeholder="Qty"
+    >
+
+    <input
+        type="number"
+        class="field unit-price part-row-4"
+        placeholder="Unit Price"
+    >
+
+    <input
+        type="number"
+        class="field line-total part-row-4"
+        placeholder="Total"
+        readonly
+    >
+
+    <!-- ROW 5 -->
+    <input
+        type="text"
+        class="field part-name part-row-5"
+        placeholder="Component"
+    >
+
+    <input
+        type="text"
+        class="field part-no part-row-5"
+        placeholder="Part No"
+    >
+
+    <input
+        type="number"
+        class="field qty part-row-5"
+        placeholder="Qty"
+    >
+
+    <input
+        type="number"
+        class="field unit-price part-row-5"
+        placeholder="Unit Price"
+    >
+
+    <input
+        type="number"
+        class="field line-total part-row-5"
+        placeholder="Total"
+        readonly
+    >
+
+    <!-- ROW 6 -->
+    <input
+        type="text"
+        class="field part-name part-row-6"
+        placeholder="Component"
+    >
+
+    <input
+        type="text"
+        class="field part-no part-row-6"
+        placeholder="Part No"
+    >
+
+    <input
+        type="number"
+        class="field qty part-row-6"
+        placeholder="Qty"
+    >
+
+    <input
+        type="number"
+        class="field unit-price part-row-6"
+        placeholder="Unit Price"
+    >
+
+    <input
+        type="number"
+        class="field line-total part-row-6"
+        placeholder="Total"
+        readonly
+    >
+
+    <!-- ROW 7 -->
+    <input
+        type="text"
+        class="field part-name part-row-7"
+        placeholder="Component"
+    >
+
+    <input
+        type="text"
+        class="field part-no part-row-7"
+        placeholder="Part No"
+    >
+
+    <input
+        type="number"
+        class="field qty part-row-7"
+        placeholder="Qty"
+    >
+
+    <input
+        type="number"
+        class="field unit-price part-row-7"
+        placeholder="Unit Price"
+    >
+
+    <input
+        type="number"
+        class="field line-total part-row-7"
+        placeholder="Total"
+        readonly
+    >
+
+    <!-- ROW 8 -->
+    <input
+        type="text"
+        class="field part-name part-row-8"
+        placeholder="Component"
+    >
+
+    <input
+        type="text"
+        class="field part-no part-row-8"
+        placeholder="Part No"
+    >
+
+    <input
+        type="number"
+        class="field qty part-row-8"
+        placeholder="Qty"
+    >
+
+    <input
+        type="number"
+        class="field unit-price part-row-8"
+        placeholder="Unit Price"
+    >
+
+    <input
+        type="number"
+        class="field line-total part-row-8"
+        placeholder="Total"
+        readonly
+    >
+
+</div>
+
+    <input
+        type="text"
+        class="field service-charge"
+        placeholder="Service Charge"
+        tabindex="130"
+    >
+    <input
+        type="text"
+        class="field grand-total"
+        placeholder="Grand Total"
+        readonly
+        tabindex="140"
+    >
+
+    <input
+        type="text"
+        class="field payment-terms"
+        placeholder="Payment Terms"
+        tabindex="200"
+    >
+
+    <input
+        type="text"
+        class="field date"
+        placeholder="Date"
+        tabindex="210"
+    >
+
+    <input
+        type="text"
+        class="field time-in"
+        placeholder="Time In"
+        tabindex="220"
+    >
+
+    <input
+        type="text"
+        class="field time-out"
+        placeholder="Time Out"
+        tabindex="230"
+    >
+
+    <!-- ===== TYPE OF SERVICE ===== -->
+
+    <input
+        type="checkbox"
+        class="field svc-diagnosis"
+        name="service_type"
+        value="diagnosis"
+        tabindex="240"
+    >
+
+    <input
+        type="checkbox"
+        class="field svc-site"
+        name="service_type"
+        value="site_visit"
+        tabindex="250"
+    >
+
+    <input
+        type="checkbox"
+        class="field svc-ppm"
+        name="service_type"
+        value="ppm"
+        tabindex="260"
+    >
+
+    <input
+        type="checkbox"
+        class="field svc-contract"
+        name="service_type"
+        value="maintenance_contract"
+        tabindex="270"
+    >
+
+    <input
+        type="checkbox"
+        class="field svc-install"
+        name="service_type"
+        value="installation"
+        tabindex="280"
+    >
+
+    <input
+        type="checkbox"
+        class="field svc-cheque"
+        name="service_type"
+        value="cheque_collection"
+        tabindex="290"
+    >
+
+    <input
+        type="checkbox"
+        class="field svc-repair"
+        name="service_type"
+        value="repair"
+        tabindex="300"
+    >
+
+    <input
+        type="checkbox"
+        class="field svc-others"
+        name="service_type"
+        value="others"
+        tabindex="310"
+    >
+
+    <input
+        type="text"
+        class="field svc-others-text"
+        placeholder="Others"
+        tabindex="320"
+    >
+
+     <!-- =====JOB STATUS ===== -->
+
+     <input
+        type="checkbox"
+        class="field completed"
+        name="complete"
+        value="completed"
+        tabindex="330"
+    >
+
+    <input
+        type="checkbox"
+        class="field follow-up"
+        name="follow_up"
+        value="follow_up"
+        tabindex="340"
+    >
+
+    <input
+        type="checkbox"
+        class="field issue-quotation"
+        name="issue_quotation"
+        value="issue_quotation"
+        tabindex="350"
+    >
+
+    <input
+        type="checkbox"
+        class="field unit-returned"
+        name="unit_returned"
+        value="unit_returned"
+        tabindex="360"
+    >
+    
+</div>
+
+<script src="/static/script.js"></script>
+
+</body>
+</html>
